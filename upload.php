@@ -2,17 +2,26 @@
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     require("conecta.php");
 
-    $nomeEvento = $_POST['nome_evento'];
-    $descricaoEvento = $_POST['descricao_evento'];
-    $imagemTemp = $_FILES['imagem']['tmp_name'];
-    $tamanho = $_FILES['imagem']['size'];
-    $tipo = $_FILES['imagem']['type'];
-    $nomeImagem = $_FILES['imagem']['name'];
+    $marca = $_POST['marca'];
+    $modelo = $_POST['modelo'];
+    $ano = $_POST['ano'];
+    $valor = $_POST['valor'];
+    $descricao = $_POST['descricao'];
+    $imagensTemp = $_FILES['imagem']['tmp_name'];
+    $tamanhos = $_FILES['imagem']['size'];
+    $tipos = $_FILES['imagem']['type'];
+    $nomesImagem = $_FILES['imagem']['name'];
 
-    if (!empty($imagemTemp)) {
-        $conteudo = addslashes(file_get_contents($imagemTemp));
+    if (!empty($imagensTemp)) {
+        $imagens = [];
+        foreach ($imagensTemp as $key => $imagemTemp) {
+            $conteudo = addslashes(file_get_contents($imagemTemp));
+            $imagens[] = $conteudo;
+        }
 
-        $queryInsercao = "INSERT INTO tabela_imagens (nome_evento, descricao_evento, nome_imagem, tamanho_imagem, tipo_imagem, imagem) VALUES ('$nomeEvento', '$descricaoEvento', '$nomeImagem', '$tamanho', '$tipo', '$conteudo')";
+        $imagensSerializadas = serialize($imagens);
+
+        $queryInsercao = "INSERT INTO tabela_imagens (marca, modelo, ano, valor, descricao, nome_imagem, tamanho_imagem, tipo_imagem, imagem) VALUES ('$marca', '$modelo', '$ano','$valor', '$descricao', '$nomesImagem', '$tamanhos', '$tipos', '$imagensSerializadas')";
 
         if (mysqli_query($conexao, $queryInsercao)) {
             echo 'Registro inserido com sucesso!';
